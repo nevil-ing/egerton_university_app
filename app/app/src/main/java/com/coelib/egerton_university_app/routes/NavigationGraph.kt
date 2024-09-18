@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.coelib.egerton_university_app.components.bottombar.BottomNavigationItems
 import com.coelib.egerton_university_app.screens.home.EcampusScreen
-import com.coelib.egerton_university_app.screens.home.FirstStepScreen
+import com.coelib.egerton_university_app.screens.home.FirstStepsScreen
 import com.coelib.egerton_university_app.screens.home.MedicalHelp
 import com.coelib.egerton_university_app.screens.home.PortalScreen
 import com.coelib.egerton_university_app.screens.home.HomeScreen
@@ -24,7 +24,7 @@ fun NavigationGraph(navController: NavHostController, onBottomBarVisibilityChang
         }
          composable(Routes.FirstStep.routes){
              onBottomBarVisibilityChanged(false)
-             FirstStepScreen()
+             FirstStepsScreen()
          }
         composable(Routes.MedicalHelp.routes){
             onBottomBarVisibilityChanged(false)
@@ -40,7 +40,7 @@ fun NavigationGraph(navController: NavHostController, onBottomBarVisibilityChang
         }
         composable(BottomNavigationItems.HomeScreen.route) {
             onBottomBarVisibilityChanged(true)
-            HomeScreen()
+            HomeScreen(navController)
         }
         composable(BottomNavigationItems.NewsScreen.route) {
             onBottomBarVisibilityChanged(true)

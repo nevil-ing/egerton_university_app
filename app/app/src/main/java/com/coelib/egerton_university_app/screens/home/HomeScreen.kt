@@ -1,5 +1,6 @@
 package com.coelib.egerton_university_app.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,16 +33,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
 import com.coelib.egerton_university_app.R
 import com.coelib.egerton_university_app.routes.Routes
 import com.coelib.egerton_university_app.screens.home.model.GridModal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(){
-  val navController: NavHostController = rememberNavController()
+fun HomeScreen(navController: NavController){
+
   Scaffold(
     topBar = { CustomTopBar() },
     content = { paddingValues ->
@@ -113,7 +113,7 @@ fun CustomTopBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GridView(navController: NavHostController){
+fun GridView(navController: NavController){
   val itemList = listOf(
     GridModal("First steps", R.drawable.firststeps, Routes.FirstStep.routes),
     GridModal("Medical help", R.drawable.medical, Routes.MedicalHelp.routes),
@@ -130,6 +130,7 @@ fun GridView(navController: NavHostController){
     items(itemList.size) { index ->
       Card(
         onClick = { /* Handle click */
+          Log.d("Navigation", "Route: ${itemList[index].route}")
           navController.navigate(itemList[index].route)
                   },
         modifier = Modifier.padding(8.dp),
