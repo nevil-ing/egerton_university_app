@@ -84,7 +84,7 @@ fun NewsScreen(){
 
                     ) {page ->
                         when (page) {
-                            0 -> NewsTab()
+                            0 -> NewsTab(viewModel = NewsViewModel())
                             1 -> NoticeTab() 
                             
                         }
