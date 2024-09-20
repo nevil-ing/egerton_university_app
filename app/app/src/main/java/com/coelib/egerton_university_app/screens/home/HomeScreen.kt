@@ -37,13 +37,14 @@ import androidx.navigation.NavController
 import com.coelib.egerton_university_app.R
 import com.coelib.egerton_university_app.routes.Routes
 import com.coelib.egerton_university_app.screens.home.model.GridModal
+import com.coelib.egerton_university_app.screens.home.recent_news.RecentNewsView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController){
 
   Scaffold(
-    topBar = { CustomTopBar() },
+    topBar = { CustomTopBar(navController) },
     content = { paddingValues ->
       Box(
         modifier = Modifier
@@ -63,7 +64,7 @@ fun HomeScreen(navController: NavController){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopBar() {
+fun CustomTopBar(navController: NavController) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -100,7 +101,8 @@ fun CustomTopBar() {
       }
     }
 
-    IconButton(onClick = { /* Handle settings click */ }) {
+    IconButton(onClick = { /* Handle settings click */
+    navController.navigate(Routes.Settings.routes)}) {
       Icon(
         imageVector = Icons.Filled.Settings,
         contentDescription = "Settings"
@@ -149,7 +151,7 @@ fun GridView(navController: NavController){
           Text(
             text = itemList[index].title,
             modifier = Modifier.padding(4.dp),
-            color = Color.Black,
+            //color = Color.Black,
             textAlign = TextAlign.Center // Center the text
           )
         }
@@ -159,23 +161,25 @@ fun GridView(navController: NavController){
 }
 //show recent news
 @Composable
-fun RecentNews(){
-  Row (
+fun RecentNews() {
+  Row(
     modifier = Modifier
       .fillMaxWidth(),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
-  ){
+  ) {
     Text(
       text = "Recent News",
       modifier = Modifier
         .padding(10.dp)
     )
-
     Text(
       text = "See all",
+      //color = MaterialTheme.colorScheme.inversePrimary,
       modifier = Modifier
         .padding(10.dp)
     )
+
   }
+  RecentNewsView()
 }

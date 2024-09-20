@@ -1,3 +1,3 @@
 package com.coelib.egerton_university_app.data.news_model
 
-class NewsModel : ArrayList<NewsModelItem>()
+class NewsModel : ArrayList<NewsModelItemX>()

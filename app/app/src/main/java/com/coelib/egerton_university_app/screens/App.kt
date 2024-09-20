@@ -12,7 +12,7 @@ import com.coelib.egerton_university_app.routes.NavigationGraph
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App() {
+fun App(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     val navController: NavHostController = rememberNavController()
     var buttonsVisible by remember { mutableStateOf(true) }
 
@@ -26,7 +26,10 @@ fun App() {
             Box(
                 modifier = Modifier.padding(paddingValues)
             ) {
-                NavigationGraph(navController = navController) { isVisible ->
+                NavigationGraph(
+                navController = navController,
+                    isDarkTheme = isDarkTheme, // Pass the theme state
+                    onThemeChange = onThemeChange, ) { isVisible ->
                     buttonsVisible = isVisible
                 }
             }

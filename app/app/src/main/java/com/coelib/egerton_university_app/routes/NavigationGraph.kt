@@ -17,9 +17,14 @@ import com.coelib.egerton_university_app.screens.location.pages.HostelScreen
 import com.coelib.egerton_university_app.screens.location.pages.LectureHallScreen
 import com.coelib.egerton_university_app.screens.location.pages.OfficeScreen
 import com.coelib.egerton_university_app.screens.news.NewsScreen
+import com.coelib.egerton_university_app.screens.settings.SettingScreen
 
 @Composable
-fun NavigationGraph(navController: NavHostController, onBottomBarVisibilityChanged: (Boolean) -> Unit){
+fun NavigationGraph(
+    navController: NavHostController,
+    isDarkTheme: Boolean, // Pass the dark theme state
+    onThemeChange: (Boolean) -> Unit,
+    onBottomBarVisibilityChanged: (Boolean) -> Unit){
     NavHost(navController, startDestination = Routes.Home.routes ){
 
         composable(Routes.Home.routes){
@@ -57,6 +62,10 @@ fun NavigationGraph(navController: NavHostController, onBottomBarVisibilityChang
         composable(Routes.Hostel.routes) {
             onBottomBarVisibilityChanged(false)
             HostelScreen()
+        }
+        composable(Routes.Settings.routes){
+            onBottomBarVisibilityChanged(false)
+            SettingScreen(isDarkTheme = isDarkTheme, onThemeChange = onThemeChange)
         }
         composable(BottomNavigationItems.HomeScreen.route) {
             onBottomBarVisibilityChanged(true)

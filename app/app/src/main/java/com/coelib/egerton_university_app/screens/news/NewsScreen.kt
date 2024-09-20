@@ -1,5 +1,6 @@
 package com.coelib.egerton_university_app.screens.news
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -84,7 +85,7 @@ fun NewsScreen(){
 
                     ) {page ->
                         when (page) {
-                            0 -> NewsTab(viewModel = NewsViewModel())
+                            0 -> NewsTab()
                             1 -> NoticeTab() 
                             
                         }
@@ -101,7 +102,8 @@ fun CusTopBar() {
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Text(
             text = "Egerton News & Notices",

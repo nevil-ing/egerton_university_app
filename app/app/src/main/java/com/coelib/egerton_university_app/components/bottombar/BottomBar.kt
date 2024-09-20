@@ -54,7 +54,13 @@ fun BottomBar(
                             Icon(imageVector = icon.imageVector, contentDescription = screen.title)
                         }
                         is IconType.DrawableIcon -> {
-                            Image(painter = painterResource(id = icon.resourceId), contentDescription = screen.title)
+                             // Change color based on theme
+
+                            Image(
+                                painter = painterResource(id = icon.resourceId),
+                                contentDescription = screen.title,
+                               // Apply color filter
+                            )
                         }
                     }
                 },
