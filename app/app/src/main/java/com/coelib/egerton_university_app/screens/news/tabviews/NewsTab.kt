@@ -19,6 +19,7 @@ fun NewsTab(viewModel: NewsViewModel){
     }
 println(news)
     Column {
+        println(news)
         if (news.isEmpty()){
             Text(text = "loading...")
         }else {

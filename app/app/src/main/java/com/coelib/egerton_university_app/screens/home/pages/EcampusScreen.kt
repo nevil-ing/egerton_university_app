@@ -1,4 +1,4 @@
-package com.coelib.egerton_university_app.screens.home
+package com.coelib.egerton_university_app.screens.home.pages
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize

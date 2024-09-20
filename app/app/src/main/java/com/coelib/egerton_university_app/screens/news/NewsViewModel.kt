@@ -13,13 +13,15 @@ class NewsViewModel : ViewModel() {
     private  val repository = NewsServiceRepository()
     private val _news = MutableLiveData<List<NewsModelItem>>()
     val news: LiveData<List<NewsModelItem>> = _news
-    fun fetchNews(){
+    fun fetchNews() {
         viewModelScope.launch {
             try {
+                println("Fetching news from the repository...")
                 val newsCards = repository.getNewsService()
+                println("News fetched successfully: $newsCards")
                 _news.value = newsCards
-            } catch (_: Exception){
-               //error handling
+            } catch (e: Exception) {
+                println("Error fetching news: ${e.localizedMessage}")
             }
         }
     }

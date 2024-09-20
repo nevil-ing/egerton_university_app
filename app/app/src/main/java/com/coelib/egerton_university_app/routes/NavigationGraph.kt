@@ -5,13 +5,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.coelib.egerton_university_app.components.bottombar.BottomNavigationItems
-import com.coelib.egerton_university_app.screens.home.EcampusScreen
-import com.coelib.egerton_university_app.screens.home.FirstStepsScreen
-import com.coelib.egerton_university_app.screens.home.MedicalHelp
-import com.coelib.egerton_university_app.screens.home.PortalScreen
+import com.coelib.egerton_university_app.screens.home.pages.EcampusScreen
+import com.coelib.egerton_university_app.screens.home.pages.FirstStepsScreen
+import com.coelib.egerton_university_app.screens.home.pages.MedicalHelp
+import com.coelib.egerton_university_app.screens.home.pages.PortalScreen
 import com.coelib.egerton_university_app.screens.home.HomeScreen
 import com.coelib.egerton_university_app.screens.info.InfoScreen
 import com.coelib.egerton_university_app.screens.location.LocationScreen
+import com.coelib.egerton_university_app.screens.location.pages.CafeteriaScreen
+import com.coelib.egerton_university_app.screens.location.pages.HostelScreen
+import com.coelib.egerton_university_app.screens.location.pages.LectureHallScreen
+import com.coelib.egerton_university_app.screens.location.pages.OfficeScreen
 import com.coelib.egerton_university_app.screens.news.NewsScreen
 
 @Composable
@@ -38,6 +42,22 @@ fun NavigationGraph(navController: NavHostController, onBottomBarVisibilityChang
             onBottomBarVisibilityChanged(false)
             PortalScreen()
         }
+        composable(Routes.Office.routes) {
+            onBottomBarVisibilityChanged(false)
+            OfficeScreen()
+        }
+        composable(Routes.Lecture.routes) {
+            onBottomBarVisibilityChanged(false)
+            LectureHallScreen()
+        }
+        composable(Routes.Cafeteria.routes) {
+            onBottomBarVisibilityChanged(false)
+            CafeteriaScreen()
+        }
+        composable(Routes.Hostel.routes) {
+            onBottomBarVisibilityChanged(false)
+            HostelScreen()
+        }
         composable(BottomNavigationItems.HomeScreen.route) {
             onBottomBarVisibilityChanged(true)
             HomeScreen(navController)
@@ -52,7 +72,8 @@ fun NavigationGraph(navController: NavHostController, onBottomBarVisibilityChang
         }
         composable(BottomNavigationItems.LocationScreen.route) {
             onBottomBarVisibilityChanged(true)
-            LocationScreen()
+            LocationScreen(navController)
         }
+
     }
 }

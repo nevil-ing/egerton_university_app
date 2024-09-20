@@ -16,6 +16,6 @@ fun InfoScreen(){
             .fillMaxSize()
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(text = "Info")
+        Text(text = "Downloaded items")
     }
 }

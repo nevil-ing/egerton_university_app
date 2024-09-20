@@ -10,4 +10,8 @@ sealed class Routes(val routes: String) {
     data object MedicalHelp: Routes("MedicalHelp")
     data object Ecampus: Routes("EcampusScreen")
     data object Portal: Routes("PortalScreen")
+    data object Office: Routes("OfficeScreen")
+    data object Lecture: Routes("LectureHallScreen")
+    data object  Cafeteria: Routes("CafeteriaScreen")
+    data object Hostel: Routes("HostelScreen")
 }
