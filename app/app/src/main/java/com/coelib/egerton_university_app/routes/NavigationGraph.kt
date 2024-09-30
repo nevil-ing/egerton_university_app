@@ -82,7 +82,7 @@ fun NavigationGraph(
         }
         composable(BottomNavigationItems.LocationScreen.route) {
             onBottomBarVisibilityChanged(true)
-            LocationScreen()
+            LocationScreen(navController)
         }
 
     }

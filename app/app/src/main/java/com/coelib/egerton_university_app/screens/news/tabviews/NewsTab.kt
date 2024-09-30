@@ -27,39 +27,47 @@ import com.coelib.egerton_university_app.screens.news.NewsViewModel
 import kotlinx.coroutines.launch
 import com.coelib.egerton_university_app.R
 
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.livedata.observeAsState
+import com.coelib.egerton_university_app.utils.Utils
 
 @Composable
 fun NewsTab(newsViewModel: NewsViewModel = viewModel()) {
-    // Use a coroutine scope within the composable
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    // State to hold the list of news
-    var newsList by remember { mutableStateOf<List<NewsModelItemX>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
+    // Observing the news data state from ViewModel
+    val newsData by newsViewModel.newsData.observeAsState(Utils.Loading())
 
-    // Launch the coroutine to fetch the news data
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            try {
-                newsList = newsViewModel.getNews()  // Call the suspend function to fetch the news
-            } finally {
-                isLoading = false  // Stop showing the loading indicator once data is fetched
+    // Scaffold for managing the UI structure and Snackbar
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        content = {padding ->
+            when (newsData) {
+                is Utils.Loading -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding)
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                is Utils.Success -> {
+                    val newsList = (newsData as Utils.Success<List<NewsModelItemX>>).data ?: emptyList()
+                    NewsList(newsItems = newsList)
+                }
+                is Utils.Error -> {
+                    LaunchedEffect(snackbarHostState) {
+                        snackbarHostState.showSnackbar((newsData as Utils.Error).message ?: "An error occurred")
+                    }
+                }
             }
         }
-    }
-
-    // Show loading indicator while fetching data
-    if (isLoading) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CircularProgressIndicator()
-        }
-    } else {
-        // Show the list of news items when loading is done
-        NewsList(newsItems = newsList)
-    }
+    )
 }
 
 @Composable
@@ -80,9 +88,10 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(modifier = Modifier
-            .padding(5.dp)
-            .fillMaxWidth(),
+        Row(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Image(
@@ -92,7 +101,6 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
                 ),
                 contentDescription = "image_url",
                 modifier = Modifier
-
             )
 
             Column(
@@ -100,17 +108,18 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
                     .fillMaxWidth()
                     .align(Alignment.CenterVertically)
             ) {
-                // Display date if available
-                newsItem.date?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant )
-                }
+                Text(
+                    text = newsItem.date,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 Text(
                     text = newsItem.title,
                     style = MaterialTheme.typography.titleMedium
                 )
+                Text(text = newsItem.intro,
+                    style = MaterialTheme.typography.bodyMedium
+                    )
             }
         }
     }

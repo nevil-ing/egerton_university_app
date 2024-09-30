@@ -22,41 +22,64 @@ import com.coelib.egerton_university_app.R
 import com.coelib.egerton_university_app.data.news_model.NewsModelItemX
 import com.coelib.egerton_university_app.screens.news.NewsViewModel
 import kotlinx.coroutines.launch
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import com.coelib.egerton_university_app.data.recent_news_model.RecentNewsModelItem
+import com.coelib.egerton_university_app.utils.Utils
+
 
 @Composable
-fun RecentNewsView(newsViewModel: NewsViewModel = viewModel()) {
+fun RecentNewsView(recentNewsViewModel: RecentNewsViewModel = viewModel()) {
     val coroutineScope = rememberCoroutineScope()
-    var recentNewsList by remember { mutableStateOf<List<NewsModelItemX>>(emptyList()) }
+    val newsData by recentNewsViewModel.recentNewsData.observeAsState(Utils.Loading())
+    val snackbarHostState = remember { SnackbarHostState() }
     var isLoading by remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            try {
-                recentNewsList = newsViewModel.getNews()
-            } finally {
-                isLoading = false
+    // Scaffold containing the SnackbarHost
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+        content = { padding ->
+            when (newsData) {
+                is Utils.Loading -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                            .padding(padding)
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                is Utils.Success -> {
+                    isLoading = false
+                    val recentNewsList = (newsData as Utils.Success<List<RecentNewsModelItem>>).data ?: emptyList()
+                    RecentNewsList(newsItems = recentNewsList)
+                }
+                is Utils.Error -> {
+                    // Show a Snackbar when there's an error
+                    LaunchedEffect(snackbarHostState) {
+                        snackbarHostState.showSnackbar( "An error occurred")
+                    }
+                }
             }
         }
-    }
-
-    if (isLoading) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CircularProgressIndicator()
-        }
-    } else {
-        RecentNewsList(newsItems = recentNewsList)
-    }
+    )
 }
 
+
+
 @Composable
-fun RecentNewsList(newsItems: List<NewsModelItemX>) {
+fun RecentNewsList(newsItems: List<RecentNewsModelItem>) {
     LazyRow(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp), // Add padding to the LazyRow itself
+        horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between items
     ) {
         items(newsItems) { newsItem ->
             RecentNewsItemCard(newsItem)
@@ -64,8 +87,9 @@ fun RecentNewsList(newsItems: List<NewsModelItemX>) {
     }
 }
 
+
 @Composable
-fun RecentNewsItemCard(newsItem: NewsModelItemX) {
+fun RecentNewsItemCard(newsItem: RecentNewsModelItem) {
     Card(
         modifier = Modifier
             .padding(10.dp)
