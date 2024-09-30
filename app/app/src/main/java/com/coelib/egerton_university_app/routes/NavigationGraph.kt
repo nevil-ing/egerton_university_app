@@ -18,6 +18,7 @@ import com.coelib.egerton_university_app.screens.location.pages.LectureHallScree
 import com.coelib.egerton_university_app.screens.location.pages.OfficeScreen
 import com.coelib.egerton_university_app.screens.news.NewsScreen
 import com.coelib.egerton_university_app.screens.settings.SettingScreen
+import com.google.androidgamesdk.gametextinput.Settings
 
 @Composable
 fun NavigationGraph(
@@ -81,7 +82,7 @@ fun NavigationGraph(
         }
         composable(BottomNavigationItems.LocationScreen.route) {
             onBottomBarVisibilityChanged(true)
-            LocationScreen(navController)
+            LocationScreen()
         }
 
     }

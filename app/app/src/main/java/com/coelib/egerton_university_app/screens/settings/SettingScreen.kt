@@ -48,7 +48,6 @@ fun SettingsAppBar() {
         )
     }
 }
-
 @Composable
 fun SettingsBody(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     Column {
