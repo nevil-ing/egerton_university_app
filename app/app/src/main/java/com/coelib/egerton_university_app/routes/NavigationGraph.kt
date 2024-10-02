@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.coelib.egerton_university_app.components.bottombar.BottomNavigationItems
 import com.coelib.egerton_university_app.screens.home.pages.EcampusScreen
-import com.coelib.egerton_university_app.screens.home.pages.FirstStepsScreen
+import com.coelib.egerton_university_app.screens.home.pages.first_steps.FirstStepsScreen
 import com.coelib.egerton_university_app.screens.home.pages.MedicalHelp
 import com.coelib.egerton_university_app.screens.home.pages.PortalScreen
 import com.coelib.egerton_university_app.screens.home.HomeScreen
@@ -18,7 +18,6 @@ import com.coelib.egerton_university_app.screens.location.pages.LectureHallScree
 import com.coelib.egerton_university_app.screens.location.pages.OfficeScreen
 import com.coelib.egerton_university_app.screens.news.NewsScreen
 import com.coelib.egerton_university_app.screens.settings.SettingScreen
-import com.google.androidgamesdk.gametextinput.Settings
 
 @Composable
 fun NavigationGraph(

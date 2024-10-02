@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +43,7 @@ fun NewsTab(newsViewModel: NewsViewModel = viewModel()) {
     // Observing the news data state from ViewModel
     val newsData by newsViewModel.newsData.observeAsState(Utils.Loading())
 
-    // Scaffold for managing the UI structure and Snackbar
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         content = {padding ->
@@ -87,6 +89,9 @@ fun NewsList(newsItems: List<NewsModelItemX>) {
 fun NewsItemCard(newsItem: NewsModelItemX) {
     Card(
         modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(corner = CornerSize(16.dp))
+
     ) {
         Row(
             modifier = Modifier

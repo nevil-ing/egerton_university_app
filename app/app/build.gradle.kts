@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -61,6 +63,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.0")
     implementation ("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.navigation:navigation-compose:2.8.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation("com.google.accompanist:accompanist-permissions:0.30.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -72,6 +76,9 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.games.activity)
+    implementation(libs.androidx.paging.common.android)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
