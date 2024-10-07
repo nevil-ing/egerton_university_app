@@ -53,7 +53,9 @@ fun NavigationGraph(
         }
         composable(Routes.Portal.routes){
             onBottomBarVisibilityChanged(false)
-            PortalScreen()
+            PortalScreen(
+                navigateBack = { navController.popBackStack()}
+            )
         }
         composable(Routes.Office.routes) {
             onBottomBarVisibilityChanged(false)
