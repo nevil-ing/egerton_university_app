@@ -47,7 +47,9 @@ fun NavigationGraph(
         }
         composable(Routes.Ecampus.routes){
             onBottomBarVisibilityChanged(false)
-            EcampusScreen()
+            EcampusScreen(
+                navigateBack = { navController.popBackStack()}
+            )
         }
         composable(Routes.Portal.routes){
             onBottomBarVisibilityChanged(false)
