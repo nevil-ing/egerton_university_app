@@ -11,7 +11,6 @@ fun EcampusScreen(){
    Row(
        modifier = Modifier
            .fillMaxSize()
-
    ) {
        Text(text = "hello Campus")
    }

@@ -3,20 +3,37 @@ package com.coelib.egerton_university_app.screens.settings
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.coelib.egerton_university_app.components.ThemeSwitcher
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
+fun SettingScreen(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit,navigateBack: () -> Unit) {
     Scaffold(
-        topBar = { SettingsAppBar() },
+        topBar = {
+
+            TopAppBar(
+                title = { Text(
+                    text = "Settings",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge
+                ) },
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.Filled.KeyboardArrowLeft,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
+                 },
         content = { paddingValues ->
             Box(
                 modifier = Modifier
@@ -32,22 +49,7 @@ fun SettingScreen(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     )
 }
 
-@Composable
-fun SettingsAppBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Settings",
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleLarge
-        )
-    }
-}
+
 @Composable
 fun SettingsBody(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     Column {
@@ -63,6 +65,5 @@ fun SettingsBody(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                         ThemeSwitcher(isDarkTheme = isDarkTheme, onThemeChange = onThemeChange)
                     }
                 )
-
     }
 }

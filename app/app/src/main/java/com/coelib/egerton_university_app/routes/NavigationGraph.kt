@@ -21,6 +21,7 @@ import com.coelib.egerton_university_app.screens.settings.SettingScreen
 
 @Composable
 fun NavigationGraph(
+
     navController: NavHostController,
     isDarkTheme: Boolean, // Pass the dark theme state
     onThemeChange: (Boolean) -> Unit,
@@ -31,13 +32,18 @@ fun NavigationGraph(
             onBottomBarVisibilityChanged(false)
            // Splash(navController = navController)
         }
-         composable(Routes.FirstStep.routes){
-             onBottomBarVisibilityChanged(false)
-             FirstStepsScreen()
-         }
+        composable(Routes.FirstStep.routes) {
+            onBottomBarVisibilityChanged(false)
+            FirstStepsScreen(
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+
         composable(Routes.MedicalHelp.routes){
             onBottomBarVisibilityChanged(false)
-            MedicalHelp()
+            MedicalHelp(
+                navigateBack = { navController.popBackStack()}
+            )
         }
         composable(Routes.Ecampus.routes){
             onBottomBarVisibilityChanged(false)
@@ -65,7 +71,10 @@ fun NavigationGraph(
         }
         composable(Routes.Settings.routes){
             onBottomBarVisibilityChanged(false)
-            SettingScreen(isDarkTheme = isDarkTheme, onThemeChange = onThemeChange)
+            SettingScreen(
+                isDarkTheme = isDarkTheme,
+                onThemeChange = onThemeChange,
+                navigateBack = { navController.popBackStack()})
         }
         composable(BottomNavigationItems.HomeScreen.route) {
             onBottomBarVisibilityChanged(true)
