@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Egerton_university_app"
         tools:targetApi="31">
+        android:name=".MyApp"
 
         <!-- Declare Firebase Messaging Service -->
         <service
