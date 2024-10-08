@@ -53,9 +53,9 @@ fun PortalBody() {
     val context = LocalContext.current
 
     val portals = listOf(
-        PortalItem("Student Portal", "https://studentportal.egerton.ac.ke/portal/"),
-        PortalItem("Staff Portal", "https://staffportal.egerton.ac.ke/"),
-        PortalItem("Parent Portal", "https://parents.egerton.ac.ke/")
+        PortalItem("Student Portal", "https://studentportal.egerton.ac.ke/portal/", R.drawable.studentportal),
+        PortalItem("Staff Portal", "https://staffportal.egerton.ac.ke/", R.drawable.staffportal),
+        PortalItem("Parent Portal", "https://parents.egerton.ac.ke/", R.drawable.parentsportal)
     )
 
     LazyColumn(
@@ -95,13 +95,12 @@ fun PortalCard(portal: PortalItem, onClick: () -> Unit) {
         ) {
             // Use painterResource if you have an icon for each portal
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground), // Placeholder for portal icons
+                painter = painterResource(id = portal.image), // Placeholder for portal icons
                 contentDescription = "${portal.title} icon"
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = portal.title,
-                color = Color.Black,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -109,4 +108,7 @@ fun PortalCard(portal: PortalItem, onClick: () -> Unit) {
     }
 }
 
-data class PortalItem(val title: String, val url: String)
+data class PortalItem(
+    val title: String,
+    val url: String,
+    val image: Int, )
