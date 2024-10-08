@@ -10,14 +10,14 @@ import java.util.concurrent.TimeUnit
 
 
 object RetrofitNewsInstance {
-    private const val BASE_URL = "https://animewallhaven.com/api/"
+    private const val BASE_URL = "https://eg-data.onrender.com/api/"
     private val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)// Ensure base URL ends with a slash
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(logging)
-        .callTimeout(30, TimeUnit.SECONDS)
-        .connectTimeout(30, TimeUnit.SECONDS) // Connection timeout
-        .readTimeout(30, TimeUnit.SECONDS) // Read timeout
-        .writeTimeout(30, TimeUnit.SECONDS)
+        .callTimeout(50, TimeUnit.SECONDS)
+        .connectTimeout(50, TimeUnit.SECONDS) // Connection timeout
+        .readTimeout(50, TimeUnit.SECONDS) // Read timeout
+        .writeTimeout(50, TimeUnit.SECONDS)
         .build()
 
     private val moshi = Moshi.Builder()

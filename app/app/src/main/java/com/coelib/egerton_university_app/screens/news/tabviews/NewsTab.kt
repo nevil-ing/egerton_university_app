@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
@@ -88,10 +89,10 @@ fun NewsList(newsItems: List<NewsModelItemX>) {
 @Composable
 fun NewsItemCard(newsItem: NewsModelItemX) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 8.dp),
         shape = RoundedCornerShape(corner = CornerSize(16.dp))
-
     ) {
         Row(
             modifier = Modifier
@@ -106,6 +107,8 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
                 ),
                 contentDescription = "image_url",
                 modifier = Modifier
+                    .size(100.dp)
+                    .padding(end = 8.dp)
             )
 
             Column(
@@ -122,11 +125,12 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
                     text = newsItem.title,
                     style = MaterialTheme.typography.titleMedium
                 )
-                Text(text = newsItem.intro,
-                    style = MaterialTheme.typography.bodyMedium
-                    )
+                Text(
+                    text = newsItem.intro,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 4
+                )
             }
         }
     }
 }
-

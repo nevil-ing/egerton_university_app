@@ -110,7 +110,6 @@ fun LocationBody(navController: NavController){
                     Text(
                         text = itemList[index].title,
                         modifier = Modifier.padding(4.dp),
-                        color = Color.Black,
                         textAlign = TextAlign.Center // Center the text
                     )
                 }
