@@ -1,6 +1,7 @@
 package com.coelib.egerton_university_app.screens.news.tabviews
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.livedata.observeAsState
+import com.coelib.egerton_university_app.components.shimmerBrush
 import com.coelib.egerton_university_app.utils.Utils
 
 @Composable
@@ -88,6 +90,9 @@ fun NewsList(newsItems: List<NewsModelItemX>) {
 
 @Composable
 fun NewsItemCard(newsItem: NewsModelItemX) {
+    // State to track whether the image is loading
+    val showShimmer = remember { mutableStateOf(true) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,17 +105,37 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Use Coil's rememberAsyncImagePainter to load the image asynchronously
             Image(
                 painter = rememberAsyncImagePainter(
                     model = newsItem.imageUrl,
+                    onSuccess = {
+                        // When the image loads successfully, hide the shimmer effect
+                        showShimmer.value = false
+                    },
+                    onError = {
+                        // Hide shimmer on error and show error image or placeholder
+                        showShimmer.value = false
+                    },
+                    onLoading = {
+                        // While the image is loading, shimmer will be shown
+                        showShimmer.value = true
+                    },
                     placeholder = painterResource(id = R.drawable.placeholderimage),
                 ),
-                contentDescription = "image_url",
+                contentDescription = "News Image",
                 modifier = Modifier
                     .size(100.dp)
                     .padding(end = 8.dp)
+                    .background(
+                        shimmerBrush(
+                            targetValue = 1300f,
+                            showShimmer = showShimmer.value
+                        )
+                    )
             )
 
+            // Text content for the news item
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -123,7 +148,8 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
                 )
                 Text(
                     text = newsItem.title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 3
                 )
                 Text(
                     text = newsItem.intro,
@@ -134,3 +160,5 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
         }
     }
 }
+
+

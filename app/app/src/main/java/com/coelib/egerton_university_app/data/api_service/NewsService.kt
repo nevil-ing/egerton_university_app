@@ -15,7 +15,7 @@ interface NewsService {
     @GET("recent_news")
     suspend fun  getRecentNewsModel(): List<RecentNewsModelItem>
     //get notices
-    @GET("notices")
+    @GET("noticeboard")
     suspend fun  getNoticesModel(): List<NoticeModelItem>
 
 }

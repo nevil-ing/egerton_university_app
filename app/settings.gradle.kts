@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "egerton_university_app"
+rootProject.name = "Egerton University"
 include(":app")
  

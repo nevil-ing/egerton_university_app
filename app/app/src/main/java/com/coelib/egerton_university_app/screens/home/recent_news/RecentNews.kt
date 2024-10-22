@@ -1,6 +1,7 @@
 package com.coelib.egerton_university_app.screens.home.recent_news
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -28,6 +29,7 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import com.coelib.egerton_university_app.components.shimmerBrush
 import com.coelib.egerton_university_app.data.recent_news_model.RecentNewsModelItem
 import com.coelib.egerton_university_app.utils.Utils
 
@@ -37,7 +39,7 @@ fun RecentNewsView(recentNewsViewModel: RecentNewsViewModel = viewModel()) {
     val coroutineScope = rememberCoroutineScope()
     val newsData by recentNewsViewModel.recentNewsData.observeAsState(Utils.Loading())
     val snackbarHostState = remember { SnackbarHostState() }
-    var isLoading by remember { mutableStateOf(true) }
+
 
     // Scaffold containing the SnackbarHost
     Scaffold(
@@ -56,13 +58,12 @@ fun RecentNewsView(recentNewsViewModel: RecentNewsViewModel = viewModel()) {
                     }
                 }
                 is Utils.Success -> {
-                    isLoading = false
+
                     val recentNewsList = (newsData as Utils.Success<List<RecentNewsModelItem>>).data ?: emptyList()
                     RecentNewsList(newsItems = recentNewsList)
                 }
                 is Utils.Error -> {
-                    // Show a Snackbar when there's an error
-                    LaunchedEffect(snackbarHostState) {
+                                        LaunchedEffect(snackbarHostState) {
                         snackbarHostState.showSnackbar( "An error occurred")
                     }
                 }
@@ -87,37 +88,61 @@ fun RecentNewsList(newsItems: List<RecentNewsModelItem>) {
     }
 }
 
-
 @Composable
 fun RecentNewsItemCard(newsItem: RecentNewsModelItem) {
+    val showShimmer = remember { mutableStateOf(true) }
+
     Card(
         modifier = Modifier
             .padding(10.dp)
             .width(200.dp)
             .height(270.dp),
         elevation = CardDefaults.cardElevation(5.dp)
-
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp),
-             // Centers the image and text
         ) {
-            // Image at the top
-            Image(
-                painter = rememberAsyncImagePainter(
-                    model = newsItem.imageUrl,
-                    placeholder = painterResource(id = R.drawable.placeholderimage),
-                ),
-                contentDescription = "news image",
-                modifier = Modifier
-                    .height(150.dp)
-                    .size(200.dp) // Fixed image size
-                    .clip(RoundedCornerShape(16.dp)) // Rounded edges for the image
-                    .fillMaxWidth(),
+            // Check if image URL is valid before trying to load
+            if (newsItem.imageUrl.isNullOrEmpty()) {
+                // Show placeholder if no image URL
+                Image(
+                    painter = painterResource(id = R.drawable.placeholderimage),
+                    contentDescription = "Placeholder Image",
+                    modifier = Modifier
+                        .height(150.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .fillMaxWidth()
+                )
+            } else {
 
-            )
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = newsItem.imageUrl,
+                        onSuccess = {
+                            // Image loaded successfully, hide shimmer
+                            showShimmer.value = false
+                        },
+                        onError = {
+                            // Hide shimmer on error and show error placeholder
+                            showShimmer.value = false
+                        },
+                        placeholder = painterResource(id = R.drawable.placeholderimage),
+                    ),
+                    contentDescription = "news image",
+                    modifier = Modifier
+                        .height(150.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .fillMaxWidth()
+                        .background(
+                            shimmerBrush(
+                                targetValue = 1300f,
+                                showShimmer = showShimmer.value
+                            )
+                        )
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp)) // Space between image and text
 

@@ -1,11 +1,12 @@
 package com.coelib.egerton_university_app.data.firebase_messaging_service
 
-
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
@@ -18,20 +19,22 @@ import com.coelib.egerton_university_app.MainActivity
 import com.coelib.egerton_university_app.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import java.io.IOException
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     // [START receive_message]
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: ${remoteMessage.from}")
 
         // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
 
-            // Check if data needs to be processed by long running job
+            // Check if data needs to be processed by long-running job
             if (needsToBeScheduled()) {
                 // For long-running tasks (10 seconds or more) use WorkManager.
                 scheduleJob()
@@ -39,32 +42,30 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 // Handle message within 10 seconds
                 handleNow()
             }
+
+            val title = remoteMessage.data["Title"] ?: "Default Title"
+            val intro = remoteMessage.data["Intro"] ?: "Default Intro"
+            val imageUrl = remoteMessage.data["Image_url"] ?: ""
+            val link = remoteMessage.data["Link"] ?: ""
+            val messageId = remoteMessage.data["MessageId"] ?: "Default messageId"
+
+            // Pass imageUrl and link to the notification
+            sendNotification(title, intro, messageId, imageUrl, link)
         }
 
         // Check if message contains a notification payload.
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
+            sendNotification(it.title ?: "default title", it.body ?: "default body", it.channelId ?: "default body", "", "")
         }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
     // [END receive_message]
 
     private fun needsToBeScheduled() = true
 
     // [START on_new_token]
-    /**
-     * Called if the FCM registration token is updated. This may occur if the security of
-     * the previous token had been compromised. Note that this is called when the
-     * FCM registration token is initially generated so this is where you would retrieve the token.
-     */
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // FCM registration token to your app server.
         sendRegistrationToServer(token)
     }
     // [END on_new_token]
@@ -84,45 +85,79 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String?) {
-        // TODO: Implement this method to send token to your app server.
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
     }
 
-    private fun sendNotification(messageBody: String) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val requestCode = 0
+    // Updated sendNotification function with image and link handling
+    private fun sendNotification(messageTitle: String, messageBody: String, messageId: String, imageUrl: String, link: String) {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra("message_id", messageId) // Pass message ID for handling in the activity
+            putExtra("post_link", link) // Pass the link to the post
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+
         val pendingIntent = PendingIntent.getActivity(
             this,
-            requestCode,
+            messageId.hashCode(), // Unique ID based on message ID
             intent,
-            PendingIntent.FLAG_IMMUTABLE,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val channelId = "fcm_default_channel"
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val channelId = "your_dynamic_channel_id"
+
+        // Download the image and set it in the notification if available
+        val bitmap = if (imageUrl.isNotEmpty()) getBitmapFromURL(imageUrl) else null
+
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("FCM Message")
-            .setContentText(messageBody)
-            .setAutoCancel(true)
-            .setSound(defaultSoundUri)
-            .setContentIntent(pendingIntent)
+            .setSmallIcon(R.mipmap.ic_launcher) // Set small icon
+            .setContentTitle(messageTitle) // Title of the notification
+            .setContentText(messageBody) // Short text of the notification
+            .setStyle(
+                if (bitmap != null) {
+                    NotificationCompat.BigPictureStyle() // Big picture style for the image
+                        .bigPicture(bitmap)
+
+                        .setSummaryText(messageBody)
+                } else {
+                    NotificationCompat.BigTextStyle().bigText(messageBody) // Fallback to BigTextStyle
+                }
+            )
+            .setAutoCancel(true) // Automatically cancel the notification when clicked
+            .setContentIntent(pendingIntent) // Set the pending intent to open the post
+           // .setColor(resources.getColor(R., theme)) // Set a Material 3 greenish color
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // High priority for the notification
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Since android Oreo notification channel is needed.
+        // Create notification channel for Android O and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT,
-            )
+                "Dynamic Channel Title",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Channel description"
+                setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), null)
+            }
             notificationManager.createNotificationChannel(channel)
         }
 
-        val notificationId = 0
-        notificationManager.notify(notificationId, notificationBuilder.build())
+        notificationManager.notify(messageId.hashCode(), notificationBuilder.build())
+    }
+
+    // Helper function to download the image from the URL
+    private fun getBitmapFromURL(imageUrl: String): Bitmap? {
+        return try {
+            val url = URL(imageUrl)
+            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+            connection.doInput = true
+            connection.connect()
+            val input: InputStream = connection.inputStream
+            BitmapFactory.decodeStream(input)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
     }
 
     companion object {
