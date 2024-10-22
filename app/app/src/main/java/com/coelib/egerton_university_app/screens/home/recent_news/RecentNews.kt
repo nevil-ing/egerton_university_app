@@ -35,9 +35,9 @@ import com.coelib.egerton_university_app.utils.Utils
 
 
 @Composable
-fun RecentNewsView(recentNewsViewModel: RecentNewsViewModel = viewModel()) {
+fun RecentNewsView(newsViewModel: NewsViewModel = viewModel()) {
     val coroutineScope = rememberCoroutineScope()
-    val newsData by recentNewsViewModel.recentNewsData.observeAsState(Utils.Loading())
+    val newsData by newsViewModel.newsData.observeAsState(Utils.Loading())
     val snackbarHostState = remember { SnackbarHostState() }
 
 
@@ -59,7 +59,7 @@ fun RecentNewsView(recentNewsViewModel: RecentNewsViewModel = viewModel()) {
                 }
                 is Utils.Success -> {
 
-                    val recentNewsList = (newsData as Utils.Success<List<RecentNewsModelItem>>).data ?: emptyList()
+                    val recentNewsList = (newsData as Utils.Success<List<NewsModelItemX>>).data ?: emptyList()
                     RecentNewsList(newsItems = recentNewsList)
                 }
                 is Utils.Error -> {
@@ -75,28 +75,31 @@ fun RecentNewsView(recentNewsViewModel: RecentNewsViewModel = viewModel()) {
 
 
 @Composable
-fun RecentNewsList(newsItems: List<RecentNewsModelItem>) {
+fun RecentNewsList(newsItems: List<NewsModelItemX>) {
+    val limitedNewsItems = newsItems.take(8)
+
     LazyRow(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp), // Add padding to the LazyRow itself
-        horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between items
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(newsItems) { newsItem ->
+        items(limitedNewsItems) { newsItem ->
             RecentNewsItemCard(newsItem)
         }
     }
 }
 
+
 @Composable
-fun RecentNewsItemCard(newsItem: RecentNewsModelItem) {
+fun RecentNewsItemCard(newsItem: NewsModelItemX) {
     val showShimmer = remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier
             .padding(10.dp)
-            .width(200.dp)
-            .height(270.dp),
+            .width(210.dp)
+            .height(300.dp),
         elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Column(
@@ -144,14 +147,21 @@ fun RecentNewsItemCard(newsItem: RecentNewsModelItem) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp)) // Space between image and text
-
-            // Text below the image
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = newsItem.date,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Text(
                 text = newsItem.title,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 3,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+            Text(
+                text = newsItem.intro,
+                style = MaterialTheme.typography.bodySmall,
                 maxLines = 4
             )
         }
