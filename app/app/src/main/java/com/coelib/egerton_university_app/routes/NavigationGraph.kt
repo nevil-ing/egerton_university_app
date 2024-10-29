@@ -59,19 +59,27 @@ fun NavigationGraph(
         }
         composable(Routes.Office.routes) {
             onBottomBarVisibilityChanged(false)
-            OfficeScreen()
+            OfficeScreen(
+                navigateBack = { navController.popBackStack()}
+            )
         }
         composable(Routes.Lecture.routes) {
             onBottomBarVisibilityChanged(false)
-            LectureHallScreen()
+            LectureHallScreen(
+                navigateBack = { navController.popBackStack()}
+            )
         }
         composable(Routes.Cafeteria.routes) {
             onBottomBarVisibilityChanged(false)
-            CafeteriaScreen()
+            CafeteriaScreen(
+                navigateBack = { navController.popBackStack()}
+            )
         }
         composable(Routes.Hostel.routes) {
             onBottomBarVisibilityChanged(false)
-            HostelScreen()
+            HostelScreen(
+                navigateBack = { navController.popBackStack()}
+            )
         }
         composable(Routes.Settings.routes){
             onBottomBarVisibilityChanged(false)

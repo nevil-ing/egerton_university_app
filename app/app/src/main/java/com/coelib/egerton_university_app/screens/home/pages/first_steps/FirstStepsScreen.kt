@@ -21,8 +21,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FirstStepsScreen(navigateBack: () -> Unit) {
-    val pagerState = rememberPagerState(pageCount = { 6 })  // Initialize the page count
-    val coroutineScope = rememberCoroutineScope()  // Used for launching coroutines for page scrolling
+    val pagerState = rememberPagerState(pageCount = { 6 })
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -40,19 +40,19 @@ fun FirstStepsScreen(navigateBack: () -> Unit) {
         }
     ) { paddingValues ->
 
-        // Box to manage the layout of the content, dots, and navigation button
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
 
-            // HorizontalPager to display different onboarding pages
+
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                // Your onboarding pages, e.g.
+
                 when (page) {
                     0 -> WelcomeBoard()
                     1 -> LocationBoard()
@@ -63,7 +63,7 @@ fun FirstStepsScreen(navigateBack: () -> Unit) {
                 }
             }
 
-            // Row for Dots Indicator and Next Button
+
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -73,7 +73,7 @@ fun FirstStepsScreen(navigateBack: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                // Page Indicator Dots
+
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth(0.4f)
@@ -97,7 +97,7 @@ fun FirstStepsScreen(navigateBack: () -> Unit) {
                     onClick = {
                         coroutineScope.launch {
                             if (pagerState.currentPage < pagerState.pageCount - 1) {
-                                // Scroll to the next page if not on the last one
+
                                 pagerState.scrollToPage(pagerState.currentPage + 1)
                             } else {
                                 navigateBack

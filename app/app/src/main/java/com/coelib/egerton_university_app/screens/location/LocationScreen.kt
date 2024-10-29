@@ -49,7 +49,6 @@ fun LocationScreen(navController: NavController){
                 title = { /*TODO*/
                     Text(
                         text = "Places"
-
                     )
 
 
