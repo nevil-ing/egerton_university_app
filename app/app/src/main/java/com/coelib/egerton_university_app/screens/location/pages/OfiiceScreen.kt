@@ -72,7 +72,7 @@ fun OfficeBody(paddingValues: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(itemListModal) { item ->
-            LectureHallCard(item, context)
+            OfficeCard(item, context)
         }
     }
 }
