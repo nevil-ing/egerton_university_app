@@ -1,5 +1,6 @@
 package com.coelib.egerton_university_app.screens.home.recent_news
 
+import android.net.ConnectivityManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -32,14 +35,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.coelib.egerton_university_app.components.shimmerBrush
 import com.coelib.egerton_university_app.data.recent_news_model.RecentNewsModelItem
 import com.coelib.egerton_university_app.utils.Utils
+import com.coelib.egerton_university_app.utils.networkUtils.ConnectivityObserver
 
 
 @Composable
-fun RecentNewsView(newsViewModel: NewsViewModel = viewModel()) {
+fun RecentNewsView(newsViewModel: NewsViewModel = viewModel(), connectivityObserver: ConnectivityObserver) {
     val coroutineScope = rememberCoroutineScope()
     val newsData by newsViewModel.newsData.observeAsState(Utils.Loading())
     val snackbarHostState = remember { SnackbarHostState() }
-
+    val connectivityStatus by connectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Available)
 
     // Scaffold containing the SnackbarHost
     Scaffold(
@@ -47,24 +51,49 @@ fun RecentNewsView(newsViewModel: NewsViewModel = viewModel()) {
             SnackbarHost(snackbarHostState)
         },
         content = { padding ->
-            when (newsData) {
-                is Utils.Loading -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
-                            .padding(padding)
-                    ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                when (newsData) {
+                    is Utils.Loading -> {
                         CircularProgressIndicator()
                     }
+                    is Utils.Success -> {
+                        val recentNewsList = (newsData as Utils.Success<List<NewsModelItemX>>).data ?: emptyList()
+                        RecentNewsList(newsItems = recentNewsList)
+                    }
+                    is Utils.Error -> {
+                        // Show error message and refresh button
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = "An error occurred. Please try again.")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            IconButton(
+                                onClick = { coroutineScope.launch { newsViewModel.getNews() } }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_refresh),
+                                    contentDescription = "Refresh",
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
+                        }
+                        // Show Snackbar on Error
+                        LaunchedEffect(snackbarHostState) {
+                            snackbarHostState.showSnackbar("An error occurred.")
+                        }
+                    }
                 }
-                is Utils.Success -> {
 
-                    val recentNewsList = (newsData as Utils.Success<List<NewsModelItemX>>).data ?: emptyList()
-                    RecentNewsList(newsItems = recentNewsList)
-                }
-                is Utils.Error -> {
-                                        LaunchedEffect(snackbarHostState) {
-                        snackbarHostState.showSnackbar( "An error occurred")
+
+                if (connectivityStatus == ConnectivityObserver.Status.Available && newsData is Utils.Error) {
+                    LaunchedEffect(connectivityStatus) {
+                        newsViewModel.getNews()
                     }
                 }
             }

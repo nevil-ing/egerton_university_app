@@ -25,10 +25,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +39,8 @@ import com.coelib.egerton_university_app.R
 import com.coelib.egerton_university_app.routes.Routes
 import com.coelib.egerton_university_app.screens.home.model.GridModal
 import com.coelib.egerton_university_app.screens.home.recent_news.RecentNewsView
+import com.coelib.egerton_university_app.utils.networkUtils.NetworkConnectivityObserver
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,8 +163,11 @@ fun GridView(navController: NavController){
   }
 }
 //show recent news
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun RecentNews() {
+  val context = LocalContext.current
+  val connectivityObserver = remember { NetworkConnectivityObserver(context) }
   Row(
     modifier = Modifier
       .fillMaxWidth(),
@@ -181,5 +187,5 @@ fun RecentNews() {
     )
 
   }
-  RecentNewsView()
+  RecentNewsView(connectivityObserver = connectivityObserver)
 }
