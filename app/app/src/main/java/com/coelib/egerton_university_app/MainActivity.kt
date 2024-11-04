@@ -1,5 +1,6 @@
 package com.coelib.egerton_university_app
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -14,13 +15,19 @@ import com.coelib.egerton_university_app.screens.App
 import com.coelib.egerton_university_app.ui.theme.Egerton_university_appTheme
 import com.coelib.egerton_university_app.utils.networkUtils.ConnectivityObserver
 import com.coelib.egerton_university_app.utils.networkUtils.NetworkConnectivityObserver
+import com.coelib.egerton_university_app.utils.workers.scheduleNotificationWorker // Import the function here
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.coelib.egerton_university_app.utils.workers.ApiRequestWorker
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     private lateinit var connectivityObserver: ConnectivityObserver
@@ -32,6 +39,10 @@ class MainActivity : ComponentActivity() {
 
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
+
+        // Schedule the notification worker
+        scheduleNotificationWorker(applicationContext)
+        scheduleApiRequestWorker(applicationContext)
 
         // Dark theme toggle
         var isDarkTheme by mutableStateOf(false)
@@ -69,7 +80,7 @@ class MainActivity : ComponentActivity() {
                     SnackbarHost(
                         hostState = snackbarHostState,
 
-                    ) { data ->
+                        ) { data ->
                         androidx.compose.material3.Snackbar(
                             snackbarData = data,
                             containerColor = when (status) {
@@ -83,8 +94,18 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
         handleIntentData()
+    }
+
+    private fun scheduleApiRequestWorker(context: Context) {
+        val apiRequestWork = PeriodicWorkRequestBuilder<ApiRequestWorker>(15, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "ApiRequestWorker",
+            ExistingPeriodicWorkPolicy.KEEP,
+            apiRequestWork
+        )
     }
 
     private fun retrieveFCMToken() {
@@ -94,7 +115,6 @@ class MainActivity : ComponentActivity() {
                 Log.d(TAG, msg)
             }
     }
-
     private fun handleIntentData() {
         intent?.extras?.let { bundle ->
             val messageId = bundle.getString("message_id")
