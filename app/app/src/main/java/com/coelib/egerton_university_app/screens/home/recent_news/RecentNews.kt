@@ -33,7 +33,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import com.coelib.egerton_university_app.components.shimmerBrush
-import com.coelib.egerton_university_app.data.recent_news_model.RecentNewsModelItem
 import com.coelib.egerton_university_app.utils.Utils
 import com.coelib.egerton_university_app.utils.networkUtils.ConnectivityObserver
 

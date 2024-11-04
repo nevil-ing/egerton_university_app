@@ -18,18 +18,25 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.coelib.egerton_university_app.screens.news.tabviews.NewsTab
 import com.coelib.egerton_university_app.screens.news.tabviews.NoticeTab
+import com.coelib.egerton_university_app.utils.networkUtils.NetworkConnectivityObserver
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun NewsScreen(){
+    val context = LocalContext.current
+    val connectivityObserver = remember { NetworkConnectivityObserver(context) }
     Scaffold(
         topBar = { CusTopBar() },
         content = { paddingValues ->
@@ -85,8 +92,8 @@ fun NewsScreen(){
 
                     ) {page ->
                         when (page) {
-                            0 -> NewsTab()
-                            1 -> NoticeTab() 
+                            0 -> NewsTab(connectivityObserver = connectivityObserver)
+                            1 -> NoticeTab(connectivityObserver = connectivityObserver)
                             
                         }
                 }
