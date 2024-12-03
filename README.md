@@ -19,3 +19,10 @@ An innovative mobile application designed to keep students, staff, and other sta
 ### News Management
 - Display news cards with images, titles, and publication dates.
 - Handle network errors gracefully with a Snackbar for better user experience.
+
+## 📸 App Screenshots
+
+| FirstSteps Screen                      | News Section                   | Home Screen                   |
+|----------------------------------|--------------------------------|---------------------------------|
+| ![FirstSteps Screen](screenshots/firststepslight.png) | ![News Section](screenshots/newsandnotices.png) | ![Home screen](screenshots/homepage.png) |
+
