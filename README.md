@@ -16,9 +16,6 @@ An innovative mobile application designed to keep students, staff, and other sta
 ### Notifications
 - **Firebase Cloud Messaging (FCM)** server to send notifications directly to users about the latest news and announcements.
 
-### News Management
-- Display news cards with images, titles, and publication dates.
-- Handle network errors gracefully with a Snackbar for better user experience.
 
 ## 📸 App Screenshots
 
