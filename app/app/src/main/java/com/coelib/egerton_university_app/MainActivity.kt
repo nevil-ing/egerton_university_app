@@ -6,27 +6,23 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.coelib.egerton_university_app.screens.App
 import com.coelib.egerton_university_app.ui.theme.Egerton_university_appTheme
 import com.coelib.egerton_university_app.utils.networkUtils.ConnectivityObserver
 import com.coelib.egerton_university_app.utils.networkUtils.NetworkConnectivityObserver
-import com.coelib.egerton_university_app.utils.workers.scheduleNotificationWorker // Import the function here
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import com.coelib.egerton_university_app.utils.workers.ApiRequestWorker
 import kotlinx.coroutines.launch
+import androidx.work.*
+import com.coelib.egerton_university_app.utils.workers.NewsWorker
+import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
@@ -35,16 +31,22 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
+        var keepSplashScreen = true
         super.onCreate(savedInstanceState)
-
+        splashScreen.setKeepOnScreenCondition { keepSplashScreen }
+        lifecycleScope.launch {
+            delay(5000)
+            keepSplashScreen = false
+        }
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
 
-        // Schedule the notification worker
-        scheduleNotificationWorker(applicationContext)
-        scheduleApiRequestWorker(applicationContext)
 
-        // Dark theme toggle
+       // schedulePeriodicNotificationWorker()
+        //scheduleNewsWorker()
+
+
         var isDarkTheme by mutableStateOf(false)
         connectivityObserver = NetworkConnectivityObserver(application = application)
 
@@ -78,9 +80,8 @@ class MainActivity : ComponentActivity() {
                     }
 
                     SnackbarHost(
-                        hostState = snackbarHostState,
-
-                        ) { data ->
+                        hostState = snackbarHostState
+                    ) { data ->
                         androidx.compose.material3.Snackbar(
                             snackbarData = data,
                             containerColor = when (status) {
@@ -96,18 +97,31 @@ class MainActivity : ComponentActivity() {
         }
         handleIntentData()
     }
-
-    private fun scheduleApiRequestWorker(context: Context) {
-        val apiRequestWork = PeriodicWorkRequestBuilder<ApiRequestWorker>(15, TimeUnit.MINUTES)
+/*
+    private fun schedulePeriodicNotificationWorker() {
+        val notificationRequest = PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.MINUTES)
+            .setInitialDelay(15, TimeUnit.MINUTES) // initial delay before the first run
             .build()
 
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "ApiRequestWorker",
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            "NotificationWorker",
             ExistingPeriodicWorkPolicy.KEEP,
-            apiRequestWork
+            notificationRequest
+        )
+    }
+    private fun scheduleNewsWorker() {
+        val workRequest = PeriodicWorkRequestBuilder<NewsWorker>(12, TimeUnit.HOURS)
+            .build()
+
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            "NewsWorker",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
         )
     }
 
+
+ */
     private fun retrieveFCMToken() {
         FirebaseMessaging.getInstance().subscribeToTopic("notify")
             .addOnCompleteListener { task ->

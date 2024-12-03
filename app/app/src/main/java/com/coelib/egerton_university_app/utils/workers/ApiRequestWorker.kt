@@ -1,57 +1,65 @@
+// NewsWorker.kt
 package com.coelib.egerton_university_app.utils.workers
 
 import android.content.Context
-import android.util.Log
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.coelib.egerton_university_app.data.api_service.RetrofitNewsInstance
-import com.coelib.egerton_university_app.data.news_model.NewsModelItemX
-import com.coelib.egerton_university_app.data.notice_model.NoticeModelItem
-import com.coelib.egerton_university_app.utils.Utils
-import kotlinx.coroutines.runBlocking
-import java.util.concurrent.TimeUnit
+import com.coelib.egerton_university_app.data.room_database.AppDatabase
+import com.coelib.egerton_university_app.data.room_database.NewsEntity
+import com.coelib.egerton_university_app.data.room_database.NoticeEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class ApiRequestWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
-    private val TAG = "ApiRequestWorker"
+class NewsWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
+
+    private val newsDao = AppDatabase.getDatabase(appContext).newsDao()
+    private val noticeDao = AppDatabase.getDatabase(appContext).noticeDao()
+    private val newsService = RetrofitNewsInstance.newsService
 
     override fun doWork(): Result {
-        return try {
-            // Call the API methods and handle the results
-            runBlocking {
-                val newsResult = fetchNews()
-                val noticesResult = fetchNotices()
+        // Use a coroutine scope to perform suspend functions in doWork()
+        CoroutineScope(Dispatchers.IO).launch {
+            fetchAndStoreNews()
+            fetchAndStoreNotices()
+        }
+        return Result.success()
+    }
 
-                // Here you can handle the results if needed
-                Log.d(TAG, "Fetched news: $newsResult")
-                Log.d(TAG, "Fetched notices: $noticesResult")
+    private suspend fun fetchAndStoreNews() {
+        try {
+            val news = newsService.getNewsModel()
+            val newsEntities = news.map {
+                NewsEntity(
+                    id = it.id,
+                    title = it.title,
+                    date = it.date,
+                    intro = it.intro,
+                    imageUrl = it.imageUrl,
+                    link = it.link
+                )
             }
-            Result.success()
+            newsDao.insertAll(newsEntities)
         } catch (e: Exception) {
-            Log.e(TAG, "Error in ApiRequestWorker: ${e.message}", e)
-            Result.failure()
+            e.printStackTrace()
         }
     }
 
-    private suspend fun fetchNews(): Utils<List<NewsModelItemX>> {
-        return try {
-            val response = RetrofitNewsInstance.newsService.getNewsModel()
-            Utils.Success(response)
+    private suspend fun fetchAndStoreNotices() {
+        try {
+            val notices = newsService.getNoticesModel()
+            val noticeEntities = notices.map {
+                NoticeEntity(
+                    id = it.id,
+                    title = it.title,
+                    article = it.article,
+                    date = it.date
+                )
+            }
+            noticeDao.insertAll(noticeEntities)
         } catch (e: Exception) {
-            Utils.Error(e.message ?: "Unknown error")
-        }
-    }
-
-    private suspend fun fetchNotices(): Utils<List<NoticeModelItem>> {
-        return try {
-            val response = RetrofitNewsInstance.newsService.getNoticesModel()
-            Utils.Success(response)
-        } catch (e: Exception) {
-            Utils.Error(e.message ?: "Unknown error")
+            e.printStackTrace()
         }
     }
 }
-
-

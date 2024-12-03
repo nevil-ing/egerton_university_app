@@ -58,19 +58,19 @@ fun NewsScreen(){
                                 modifier = Modifier
                                     .tabIndicatorOffset(tabPositions[pageState.currentPage]),
 
-                            )
+                                )
                         }
 
                     ) {
                         Tab(
                             selected = pageState.currentPage==0,
                             text = {
-                                   Text(text = "News")
+                                Text(text = "News")
                             },
                             onClick = { /*TODO*/
-                            coroutineScope.launch {
-                                pageState.scrollToPage(0)
-                            }}
+                                coroutineScope.launch {
+                                    pageState.scrollToPage(0)
+                                }}
                         )
                         Tab(
                             selected = pageState.currentPage==1,
@@ -90,15 +90,15 @@ fun NewsScreen(){
                         state = pageState,
                         userScrollEnabled = false,
 
-                    ) {page ->
+                        ) {page ->
                         when (page) {
                             0 -> NewsTab(connectivityObserver = connectivityObserver)
                             1 -> NoticeTab(connectivityObserver = connectivityObserver)
-                            
+
                         }
+                    }
                 }
             }
-        }
         }
     )
 }
@@ -119,4 +119,3 @@ fun CusTopBar() {
         )
     }
 }
-

@@ -1,154 +1,121 @@
 package com.coelib.egerton_university_app.screens.news.tabviews
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.coelib.egerton_university_app.data.news_model.NewsModelItemX
-import com.coelib.egerton_university_app.screens.news.NewsViewModel
-import kotlinx.coroutines.launch
 import com.coelib.egerton_university_app.R
-
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.livedata.observeAsState
 import com.coelib.egerton_university_app.components.shimmerBrush
-import com.coelib.egerton_university_app.screens.home.recent_news.RecentNewsList
-import com.coelib.egerton_university_app.utils.Utils
+import com.coelib.egerton_university_app.data.cloud_store_news.FirestoreNewsModel
+import com.coelib.egerton_university_app.data.cloud_store_news.News
 import com.coelib.egerton_university_app.utils.networkUtils.ConnectivityObserver
 
+
+
 @Composable
-fun NewsTab(newsViewModel: NewsViewModel = viewModel(), connectivityObserver: ConnectivityObserver) {
+fun NewsTab(
+    firestoreNewsModel: FirestoreNewsModel = viewModel(),
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    connectivityObserver: ConnectivityObserver
+) {
+    val newsList = firestoreNewsModel.state.value
     val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-    // Observing the news data state from ViewModel
-    val newsData by newsViewModel.newsData.observeAsState(Utils.Loading())
     val connectivityStatus by connectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Available)
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        content = {padding ->
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding)
-                    ) {
-                        when (newsData) {
-                            is Utils.Loading -> {
-                                CircularProgressIndicator()
-                            }
-                            is Utils.Success -> {
-                                val newsList = (newsData as Utils.Success<List<NewsModelItemX>>).data ?: emptyList()
-                                NewsList(newsItems = newsList)
-                            }
-                            is Utils.Error -> {
-                                // Show error message and refresh button
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(text = "An error occurred. Please try again.")
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    IconButton(
-                                        onClick = { coroutineScope.launch { newsViewModel.getNews() } }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_refresh),
-                                            contentDescription = "Refresh",
-                                            modifier = Modifier.size(48.dp)
-                                        )
-                                    }
-                                }
-                                // Show Snackbar on Error
-                                LaunchedEffect(snackbarHostState) {
-                                    snackbarHostState.showSnackbar("An error occurred.")
-                                }
-                            }
-                        }
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            if (connectivityStatus != ConnectivityObserver.Status.Available) {
 
+                Text(text = "No internet connection. Please reconnect.")
+            }else {
+                if (newsList.isEmpty()) {
 
-                        if (connectivityStatus == ConnectivityObserver.Status.Available && newsData is Utils.Error) {
-                            LaunchedEffect(connectivityStatus) {
-                                newsViewModel.getNews()
-                            }
-                        }
+                    CircularProgressIndicator()
+                } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    items(newsList.size) { index ->
+                        val news = newsList[index]
+                        NewsItem(news = news)
+                    }
+                }
+                }}
+            }
         }
-        }
-    )
 }
 
 @Composable
-fun NewsList(newsItems: List<NewsModelItemX>) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(newsItems) { newsItem ->
-            NewsItemCard(newsItem)
-        }
-    }
-}
-
-@Composable
-fun NewsItemCard(newsItem: NewsModelItemX) {
-    // State to track whether the image is loading
+fun NewsItem(news: News) {
     val showShimmer = remember { mutableStateOf(true) }
-
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(corner = CornerSize(16.dp))
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .clickable {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(news.link)
+                }
+                context.startActivity(intent)
+            }
     ) {
         Row(
             modifier = Modifier
                 .padding(5.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxWidth()
         ) {
-            // Use Coil's rememberAsyncImagePainter to load the image asynchronously
             Image(
                 painter = rememberAsyncImagePainter(
-                    model = newsItem.imageUrl,
+                    model = news.imageUrl,
                     onSuccess = {
-                        // When the image loads successfully, hide the shimmer effect
                         showShimmer.value = false
                     },
                     onError = {
-                        // Hide shimmer on error and show error image or placeholder
                         showShimmer.value = false
                     },
                     onLoading = {
-                        // While the image is loading, shimmer will be shown
                         showShimmer.value = true
                     },
                     placeholder = painterResource(id = R.drawable.placeholderimage),
@@ -164,25 +131,23 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
                         )
                     )
             )
-
-            // Text content for the news item
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = newsItem.date,
+                    text = news.date,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = newsItem.title,
+                    text = news.title,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 3
                 )
                 Text(
-                    text = newsItem.intro,
+                    text = news.intro,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 4
                 )
@@ -190,5 +155,3 @@ fun NewsItemCard(newsItem: NewsModelItemX) {
         }
     }
 }
-
-

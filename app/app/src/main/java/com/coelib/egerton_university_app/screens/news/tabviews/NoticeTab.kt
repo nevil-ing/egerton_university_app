@@ -61,53 +61,53 @@ fun NoticeTab(noticeViewModel: NoticeViewModel = viewModel(), connectivityObserv
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         content = {padding ->
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding)
-                    ) {
-                        when (noticeData) {
-                            is Utils.Loading -> {
-                                CircularProgressIndicator()
-                            }
-                            is Utils.Success -> {
-                                val noticeList = (noticeData as Utils.Success<List<NoticeModelItem>>).data ?: emptyList()
-                                NoticeList(noticeItems = noticeList)
-                            }
-                            is Utils.Error -> {
-                                // Show error message and refresh button
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(text = "An error occurred. Please try again.")
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    IconButton(
-                                        onClick = { coroutineScope.launch { noticeViewModel.getNotices() } }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_refresh),
-                                            contentDescription = "Refresh",
-                                            modifier = Modifier.size(48.dp)
-                                        )
-                                    }
-                                }
-                                // Show Snackbar on Error
-                                LaunchedEffect(snackbarHostState) {
-                                    snackbarHostState.showSnackbar("An error occurred.")
-                                }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                when (noticeData) {
+                    is Utils.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is Utils.Success -> {
+                        val noticeList = (noticeData as Utils.Success<List<NoticeModelItem>>).data ?: emptyList()
+                        NoticeList(noticeItems = noticeList)
+                    }
+                    is Utils.Error -> {
+                        // Show error message and refresh button
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = "An error occurred. Please try again.")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            IconButton(
+                                onClick = { coroutineScope.launch { noticeViewModel.getNotices() } }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_refresh),
+                                    contentDescription = "Refresh",
+                                    modifier = Modifier.size(48.dp)
+                                )
                             }
                         }
-
-
-                        if (connectivityStatus == ConnectivityObserver.Status.Available && noticeData is Utils.Error) {
-                            LaunchedEffect(connectivityStatus) {
-                                noticeViewModel.getNotices()
-                            }
+                        // Show Snackbar on Error
+                        LaunchedEffect(snackbarHostState) {
+                            snackbarHostState.showSnackbar("An error occurred.")
                         }
                     }
                 }
+
+
+                if (connectivityStatus == ConnectivityObserver.Status.Available && noticeData is Utils.Error) {
+                    LaunchedEffect(connectivityStatus) {
+                        noticeViewModel.getNotices()
+                    }
+                }
+            }
+        }
 
     )
 }
@@ -173,4 +173,3 @@ fun NoticeItemCard(noticeItem: NoticeModelItem) {
         }
     }
 }
-

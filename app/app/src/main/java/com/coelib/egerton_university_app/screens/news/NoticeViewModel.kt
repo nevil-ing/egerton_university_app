@@ -11,13 +11,13 @@ import com.coelib.egerton_university_app.utils.Utils
 import kotlinx.coroutines.launch
 
 class NoticeViewModel : ViewModel() {
-     private val _noticesData = MutableLiveData<Utils<List<NoticeModelItem>>>()
+    private val _noticesData = MutableLiveData<Utils<List<NoticeModelItem>>>()
 
     val noticesData: LiveData<Utils<List<NoticeModelItem>>> get() = _noticesData
     private val noticesService = RetrofitNewsInstance.newsService
 
     init {
-        viewModelScope.launch { 
+        viewModelScope.launch {
             getNotices()
         }
     }

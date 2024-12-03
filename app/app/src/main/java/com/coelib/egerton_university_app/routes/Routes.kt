@@ -15,4 +15,5 @@ sealed class Routes(val routes: String) {
     data object  Cafeteria: Routes("CafeteriaScreen")
     data object Hostel: Routes("HostelScreen")
     data object Settings: Routes("SettingsScreen")
+    data object AllNews: Routes("AllNewsScreen")
 }

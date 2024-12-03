@@ -16,6 +16,7 @@ import com.coelib.egerton_university_app.screens.location.pages.CafeteriaScreen
 import com.coelib.egerton_university_app.screens.location.pages.HostelScreen
 import com.coelib.egerton_university_app.screens.location.pages.LectureHallScreen
 import com.coelib.egerton_university_app.screens.location.pages.OfficeScreen
+import com.coelib.egerton_university_app.screens.news.AllNewsScreen
 import com.coelib.egerton_university_app.screens.news.NewsScreen
 import com.coelib.egerton_university_app.screens.settings.SettingScreen
 
@@ -88,6 +89,12 @@ fun NavigationGraph(
                 onThemeChange = onThemeChange,
                 navigateBack = { navController.popBackStack()})
         }
+        composable(Routes.AllNews.routes){
+            onBottomBarVisibilityChanged(false)
+            AllNewsScreen(
+                navigateBack = { navController.popBackStack() }
+            )
+        }
         composable(BottomNavigationItems.HomeScreen.route) {
             onBottomBarVisibilityChanged(true)
             HomeScreen(navController)
@@ -104,6 +111,7 @@ fun NavigationGraph(
             onBottomBarVisibilityChanged(true)
             LocationScreen(navController)
         }
+
 
     }
 }

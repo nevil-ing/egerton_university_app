@@ -2,6 +2,7 @@ package com.coelib.egerton_university_app.screens.home
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +59,7 @@ fun HomeScreen(navController: NavController){
           Spacer(modifier = Modifier.height(15.dp))
           GridView(navController)
           Spacer(modifier = Modifier.height(20.dp))
-          RecentNews()
+          RecentNews(navController)
         }
       }
     }
@@ -165,7 +166,7 @@ fun GridView(navController: NavController){
 //show recent news
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-fun RecentNews() {
+fun RecentNews(navController: NavController) {
   val context = LocalContext.current
   val connectivityObserver = remember { NetworkConnectivityObserver(context) }
   Row(
@@ -180,10 +181,15 @@ fun RecentNews() {
         .padding(10.dp)
     )
     Text(
-      text = "See all",
-      //color = MaterialTheme.colorScheme.inversePrimary,
+      text =
+      "See all",
+      color = MaterialTheme.colorScheme.inversePrimary,
       modifier = Modifier
         .padding(10.dp)
+        .clickable {
+          navController.navigate(Routes.AllNews.routes)
+        }
+
     )
 
   }
