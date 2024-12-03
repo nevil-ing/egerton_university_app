@@ -25,4 +25,8 @@ An innovative mobile application designed to keep students, staff, and other sta
 | FirstSteps Screen                      | News Section                   | Home Screen                   |
 |----------------------------------|--------------------------------|---------------------------------|
 | ![FirstSteps Screen](app/screenshots/firststepslight.png) | ![News Section](app/screenshots/newsandnotices.png) | ![Home screen](app/screenshots/homepage.png) |
+| library Screen                      | portal Section                   | location Screen                   |
+|----------------------------------|--------------------------------|---------------------------------|
+| ![library Screen](app/screenshots/librarylight.png) | ![Portal screen](app/screenshots/portalscreen.png) | ![Location screen](app/screenshots/locationlight.png) |
+
 
