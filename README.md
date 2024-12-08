@@ -1,6 +1,6 @@
 # Egerton University News App 📱📡📰
 
-An innovative mobile application designed to keep students, staff, and other stakeholders of Egerton University informed with the latest news and updates. This app integrates **Kotlin Jetpack Compose** for the frontend, a **Python Flask scraper** for backend data acquisition, and **Firebase Cloud Messaging (FCM)** to deliver timely notifications about breaking news and events.
+An innovative mobile application designed to keep students, staff, and other stakeholders of Egerton University informed with the latest news and updates. This app integrates **Kotlin Jetpack Compose** for the frontend, a **Nextjs scraper** for backend data acquisition, and **Firebase Cloud Messaging (FCM)** to deliver timely notifications about breaking news and events.
 
 ## 🌟 Features
 
@@ -10,7 +10,7 @@ An innovative mobile application designed to keep students, staff, and other sta
 - Integrated top bar with Egerton University branding.
 
 ### Backend
-- **Python Flask Scraper** to fetch news and updates from Egerton University's website dynamically.
+- **Nextjs  Scraper** to fetch news and updates from Egerton University's website dynamically.
 - Processed data stored securely on **Cloud Firestore** for scalability and real-time access.
 
 ### Notifications
