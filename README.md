@@ -16,6 +16,15 @@ An innovative mobile application designed to keep students, staff, and other sta
 ### Notifications
 - **Firebase Cloud Messaging (FCM)** server to send notifications directly to users about the latest news and announcements.
 
-### News Management
-- Display news cards with images, titles, and publication dates.
-- Handle network errors gracefully with a Snackbar for better user experience.
+
+## 📸 App Screenshots
+
+| FirstSteps Screen                      | News Section                   | Home Screen                   |
+|----------------------------------|--------------------------------|---------------------------------|
+| ![FirstSteps Screen](app/screenshots/firststepslight.png) | ![News Section](app/screenshots/newsandnotices.png) | ![Home screen](app/screenshots/homepage.png) |
+
+| library Screen                      | portal Section                   | location Screen                   |
+|----------------------------------|--------------------------------|---------------------------------|
+| ![library Screen](app/screenshots/librarylight.png) | ![Portal screen](app/screenshots/portalscreen.png) | ![Location screen](app/screenshots/locationlight.png) |
+
+
