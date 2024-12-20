@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "975487003863",
+    "project_id": "webscrapertest-9d423",
+    "storage_bucket": "webscrapertest-9d423.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975487003863:android:a3e42353113a1b286d1492",
+        "android_client_info": {
+          "package_name": "com.coelib.egerton_university_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBys-MUe7DIL2sSe5cawi46KhWo6o5Exk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
