@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { keepSplashScreen }
         lifecycleScope.launch {
-            delay(5000)
+            delay(3000)
             keepSplashScreen = false
         }
         // Initialize Firebase
